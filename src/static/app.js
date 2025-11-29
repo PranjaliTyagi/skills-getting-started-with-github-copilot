@@ -10,8 +10,9 @@ document.addEventListener("DOMContentLoaded", () => {
       const response = await fetch("/activities");
       const activities = await response.json();
 
-      // Clear loading message
+      // Clear loading message and reset activity select (avoid duplicate options)
       activitiesList.innerHTML = "";
+      activitySelect.innerHTML = '<option value="">-- Select an activity --</option>';
 
       // Populate activities list
       Object.entries(activities).forEach(([name, details]) => {
@@ -84,11 +85,12 @@ document.addEventListener("DOMContentLoaded", () => {
         signupForm.reset();
         messageDiv.classList.remove("hidden");
 
-        // Refresh activities list after successful signup
+        // Refresh activities list immediately after successful signup
+        fetchActivities();
+        // Hide the message after a short delay
         setTimeout(() => {
-          fetchActivities();
           messageDiv.classList.add("hidden");
-        }, 2000);
+        }, 3000);
       } else {
         messageDiv.textContent = result.detail || "An error occurred";
         messageDiv.className = "error";
@@ -123,11 +125,11 @@ document.addEventListener("DOMContentLoaded", () => {
         messageDiv.textContent = result.message;
         messageDiv.className = "success";
         messageDiv.classList.remove("hidden");
-        
-        // Refresh activities list
+
+        // Refresh activities list immediately after successful unregister
+        fetchActivities();
         setTimeout(() => {
           messageDiv.classList.add("hidden");
-          fetchActivities();
         }, 2000);
       } else {
         messageDiv.textContent = result.detail || "Failed to unregister";
